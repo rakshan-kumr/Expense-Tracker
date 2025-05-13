@@ -9,7 +9,7 @@ function ExpenseItem({ id, description, amount, date }) {
 
   function expensePressHandler() {
     navigation.navigate('ManageExpense', {
-      expenseId: id
+      expenseId: id,
     });
   }
 
