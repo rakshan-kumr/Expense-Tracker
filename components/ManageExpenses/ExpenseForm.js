@@ -50,8 +50,7 @@ const ExpenseForm = ({
     const isDateValid =
       /^\d{4}-\d{2}-\d{2}$/.test(inputs.date.value) &&
       toSubmitData.date.toString() !== 'Invalid Date';
-    console.log(toSubmitData.date.toString());
-
+    // console.log(toSubmitData.date.toString());
     const isDescriptionValid = toSubmitData.description.trim().length !== 0;
 
     if (!isAmountValid || !isDateValid || !isDescriptionValid) {
