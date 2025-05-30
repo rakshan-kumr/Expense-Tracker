@@ -4,6 +4,7 @@ import Input from './Input';
 import Button from '../UI/Button';
 import { getFormattedDate } from '../../util/date';
 import { GlobalStyles } from '../../constants/styles';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const ExpenseForm = ({
   onCancel,
@@ -19,7 +20,9 @@ const ExpenseForm = ({
       isValid: true,
     },
     date: {
-      value: defaultValues ? getFormattedDate(defaultValues.date) : '',
+      value: defaultValues
+        ? getFormattedDate(defaultValues.date)
+        : getFormattedDate(new Date()),
       isValid: true,
     },
     description: {
