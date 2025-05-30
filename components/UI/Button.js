@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
 
 function Button({ children, onPress, mode, style }) {
+  // console.log(style.paddingHorizontal);
   return (
     <View style={style}>
       <Pressable
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 4,
     padding: 8,
+    paddingHorizontal: 16,
     backgroundColor: GlobalStyles.colors.primary500,
   },
   flat: {

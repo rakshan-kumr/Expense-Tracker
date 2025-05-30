@@ -7,11 +7,13 @@ import { ExpensesContext } from '../store/expenses-context';
 import ExpenseForm from '../components/ManageExpenses/ExpenseForm';
 import { DeleteExpense, StoreExpense, UpdateExpense } from '../util/http';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
+import ErrorOverlay from '../components/UI/ErrorOverlay';
 
 function ManageExpense({ route, navigation }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const expensesCtx = useContext(ExpensesContext);
+  const [error, setError] = useState();
 
+  const expensesCtx = useContext(ExpensesContext);
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
@@ -26,10 +28,15 @@ function ManageExpense({ route, navigation }) {
   }, [navigation, isEditing]);
 
   async function deleteExpenseHandler() {
-    setIsSubmitting(true);
-    await DeleteExpense(editedExpenseId);
-    expensesCtx.deleteExpense(editedExpenseId);
-    navigation.goBack();
+    try {
+      setIsSubmitting(true);
+      await DeleteExpense(editedExpenseId);
+      expensesCtx.deleteExpense(editedExpenseId);
+      navigation.goBack();
+    } catch (error) {
+      setError('Could not delete expense. Please try again later.');
+      setIsSubmitting(false);
+    }
   }
 
   function cancelHandler() {
@@ -37,18 +44,33 @@ function ManageExpense({ route, navigation }) {
   }
 
   async function confirmHandler(expenseData) {
-    if (isEditing) {
-      expensesCtx.updateExpense(editedExpenseId, expenseData);
-      setIsSubmitting(true);
-      await UpdateExpense(editedExpenseId, expenseData);
-    } else {
-      const id = await StoreExpense(expenseData);
-      expensesCtx.addExpense({ id, ...expenseData });
+    try {
+      if (isEditing) {
+        expensesCtx.updateExpense(editedExpenseId, expenseData);
+        setIsSubmitting(true);
+        await UpdateExpense(editedExpenseId, expenseData);
+      } else {
+        const id = await StoreExpense(expenseData);
+        expensesCtx.addExpense({ id, ...expenseData });
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError('Could not save data. Please try again later.');
+      setIsSubmitting(false);
     }
-    navigation.goBack();
   }
-  // console.log(FetchExpenses);
-  // FetchExpenses();
+
+  if (error) {
+    return (
+      <ErrorOverlay
+        message={error}
+        onConfirm={() => {
+          setError(null);
+        }}
+      />
+    );
+  }
+
   if (isSubmitting) {
     return <LoadingOverlay />;
   }
